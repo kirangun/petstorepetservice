@@ -26,7 +26,7 @@
         <jaxb.version>2.4.0-b180830.0359</jaxb.version>
         <postgresql.version>42.5.4</postgresql.version>
         <org.mapstruct.version>1.5.3.Final</org.mapstruct.version>
-        <lombock.version>1.18.24</lombock.version>
+        <lombock.version>1.18.24</lombock.version> 
     </properties>
 
     <dependencies>

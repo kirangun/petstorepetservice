@@ -6,7 +6,9 @@ import java.util.Objects;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import javax.persistence.*;
 
+import com.chtrembl.petstore.pet.repository.StatusEnumConverter;
 import org.springframework.validation.annotation.Validated;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -18,26 +20,42 @@ import io.swagger.annotations.ApiModelProperty;
 /**
  * Pet
  */
+@Entity
+@Table(name = "pet")
 @Validated
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.SpringCodegen", date = "2021-12-20T15:31:39.272-05:00")
 
 public class Pet {
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@JsonProperty("id")
 	private Long id;
 
+	@ManyToOne
+	@JoinColumn(name = "category_id", nullable = false)
 	@JsonProperty("category")
 	private Category category;
 
+	@Column(nullable = false, unique = true, length = 64)
 	@JsonProperty("name")
+	@NotNull
 	private String name;
 
+	@Column(name = "photoURL", nullable = false, length = 255)
 	@JsonProperty("photoURL")
 	@Valid
 	private String photoURL;
 
+	@ManyToMany
+	@JoinTable(
+			name = "pet_tag",
+			joinColumns = @JoinColumn(name = "pet_id"),
+			inverseJoinColumns = @JoinColumn(name = "tag_id")
+	)
 	@JsonProperty("tags")
 	@Valid
-	private List<Tag> tags = null;
+	private List<Tag> tags = new ArrayList<>();
 
 	/**
 	 * pet status in the store
@@ -76,7 +94,9 @@ public class Pet {
 		}
 	}
 
+	@Column(nullable = false, length = 64)
 	@JsonProperty("status")
+	@Convert(converter = StatusEnumConverter.class)
 	private StatusEnum status;
 
 	public Pet id(Long id) {

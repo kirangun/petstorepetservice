@@ -8,7 +8,6 @@ import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-import com.chtrembl.petstore.pet.repository.PetRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -51,9 +50,6 @@ public class PetApiController implements PetApi {
 
 	@Autowired
 	private DataPreload dataPreload;
-
-	@Autowired
-	private PetRepository petRepository;
 
 	@Override
 	public DataPreload getBeanToBeAutowired() {
@@ -104,8 +100,7 @@ public class PetApiController implements PetApi {
 					"PetStorePetService incoming GET request to petstorepetservice/v2/pet/findPetsByStatus?status=%s",
 					status));
 			try {
-				List<Pet> dataFromDB = petRepository.findByStatus(status.get(0));
-				String petsJSON = new ObjectMapper().writeValueAsString(dataFromDB);
+				String petsJSON = new ObjectMapper().writeValueAsString(this.getPreloadedPets());
 				ApiUtil.setResponse(request, "application/json", petsJSON);
 				return new ResponseEntity<>(HttpStatus.OK);
 			} catch (JsonProcessingException e) {
